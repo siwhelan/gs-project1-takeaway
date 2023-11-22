@@ -24,7 +24,6 @@
  
 ```python
 
-
 class Menu():
 
     def __init__(self):
@@ -36,10 +35,8 @@ class Menu():
         # returns a list of all menu items & their prices
         pass
 ```
----
 
 ```python
-
 
 class Order:
     def __init__():
@@ -106,8 +103,8 @@ order = Order()
 ```python
 # Test Order Interaction with Menu
 ```
-- Create `Menu` and `Order` instances.
-- Add 'Pizza' to menu with price 9.99.
-- Add 2 'Pizza' to order.
-- Calculate total, expect 19.98.
-- Generate receipt, confirm 'Pizza' and '19.98' present.
+    - Create `Menu` and `Order` instances.
+    - Add 'Pizza' to menu with price 9.99.
+    - Add 2 'Pizza' to order.
+    - Calculate total, expect 19.98.
+    - Generate receipt, confirm 'Pizza' and '19.98' present.

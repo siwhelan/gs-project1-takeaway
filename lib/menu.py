@@ -1,7 +1,7 @@
 class Menu:
     def __init__(self):
         # initialises menu of dishes
-        # which contains a list dishes e.g [name, price]
+        # which contains a dict of dishes e.g [name, price]
         self.dishes = {
             "Cheeseburger": 8.99,
             "Chicken Nuggets": 5.49,

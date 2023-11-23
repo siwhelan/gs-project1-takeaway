@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 pytest = "*"
+python-dotenv = "*"
+twilio = "*"
 
 [dev-packages]
 

@@ -1,8 +1,13 @@
 from lib.menu import Menu
 from lib.order import Order
 from unittest import mock
+from dotenv import load_dotenv
 import pytest
 import datetime
+import os
+
+
+load_dotenv()
 
 
 # # test add_items correctly adds single item and quantity to the order
@@ -127,3 +132,88 @@ def test_complete_order_integration():
 
         # Final assertion to check if the order is marked as completed
         assert order.completed == True
+
+
+# Mock Twilio client creation
+@pytest.mark.skip(reason="Disable actual texts during testing")
+@mock.patch("lib.order.Client")
+def test_twilio_integration(self, mock_client_class):
+    # Create a mock Twilio client instance
+    mock_twilio_client = mock_client_class.return_value
+    mock_twilio_client.messages.create.return_value.sid = "MockedSID"
+
+    order = Order()
+    menu = Menu()
+    order.add_items(menu, "Chicken Wrap", 2)
+    order.add_items(menu, "Large Fries", 1)
+
+    to_number = os.getenv("TWILIO_TO_NUMBER")
+    from_number = os.getenv("TWILIO_FROM_NUMBER")
+
+    result = order.complete_order(to_number, from_number)
+
+    mock_twilio_client.messages.create.assert_called_with(
+        to=to_number,
+        from_=from_number,
+        body=mock.ANY,  # You can check the exact message content here
+    )
+
+    assert result == "MockedSID"
+
+
+"""
+This test does the following:
+
+Mocks the messages.create method of the Twilio client.
+Creates instances of Menu and Order.
+Adds a 'Cheeseburger' from the menu to the order.
+Calls complete_order on the Order instance, which triggers a text message via Twilio.
+Asserts that the mocked messages.create method was called with the expected arguments.
+"""
+
+
+@mock.patch(
+    "lib.order.client.messages.create"
+)  # Mock the Twilio messages.create method
+def test_complete_order_sends_confirmation_text(mock_create):
+    # Setup mock response for messages.create
+    mock_create.return_value.sid = "mocked_sid"
+    # Create an instance of Menu and Order
+    test_menu = Menu()
+    test_order = Order()
+    # Add an item from the menu to the order
+    test_order.add_items(test_menu, "Cheeseburger", 1)
+    # Call complete_order which should trigger generate_confirmation_text
+    test_order.complete_order("test_to_number", "test_from_number")
+    # Assert that the Twilio messages.create method was called with expected arguments
+    mock_create.assert_called_once_with(
+        to="test_to_number",
+        from_="test_from_number",
+        body=mock.ANY,  # exact message content isn't important for this test, just a response
+    )
+
+
+# test different orders generate different messages
+@mock.patch("lib.order.client.messages.create")
+def test_twilio_message_content_for_different_orders(mock_create):
+    test_menu = Menu()
+    test_order = Order()
+    test_order.add_items(test_menu, "Chicken Wrap", 2)
+    test_order.complete_order("test_to_number", "test_from_number")
+    message_body_1 = mock_create.call_args[1]["body"]
+
+    test_order = Order()
+    test_order.add_items(test_menu, "Bottled Water", 1)
+    test_order.complete_order("test_to_number", "test_from_number")
+    message_body_2 = mock_create.call_args[1]["body"]
+
+    assert message_body_1 != message_body_2
+
+
+# test twilio is not called on an empty order
+@mock.patch("lib.order.client.messages.create")
+def test_twilio_not_called_for_empty_order(mock_create):
+    test_order = Order()
+    with pytest.raises(Exception):
+        test_order.complete_order("test_to_number", "test_from_number")
+    mock_create.assert_not_called()

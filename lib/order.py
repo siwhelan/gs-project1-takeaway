@@ -66,4 +66,4 @@ class Order:
     def generate_confirmation_text(self, number_to, number_from, message):
         # Send the message
         message = client.messages.create(to=number_to, from_=number_from, body=message)
-        return message.sid  # Returns the message SID to confirm sending
+        return message.sid

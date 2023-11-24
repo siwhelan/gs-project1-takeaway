@@ -217,3 +217,20 @@ def test_twilio_not_called_for_empty_order(mock_create):
     with pytest.raises(Exception):
         test_order.complete_order("test_to_number", "test_from_number")
     mock_create.assert_not_called()
+
+
+# end to end test
+@mock.patch("lib.order.client.messages.create")
+def test_complete_order_integration(mock_create):
+    mock_create.return_value.sid = "mocked_sid"
+    test_menu = Menu()
+    test_order = Order()
+    test_order.add_items(test_menu, "Chicken Wrap", 2)
+    test_order.add_items(test_menu, "Large Fries", 1)
+    test_order.complete_order("test_to_number", "test_from_number")
+    mock_create.assert_called_once_with(
+        to="test_to_number",
+        from_="test_from_number",
+        body=mock.ANY,
+    )
+    assert test_order.completed == True

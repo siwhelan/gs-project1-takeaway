@@ -5,7 +5,7 @@ import pytest
 import datetime
 
 
-# test add_items correctly adds single item and quantity to the order
+# # test add_items correctly adds single item and quantity to the order
 def test_adding_item_from_menu_to_order():
     menu = Menu()
     order = Order()
@@ -19,7 +19,7 @@ def test_adding_item_from_menu_to_order():
 
 
 # test adding multiple items
-def test_adding_item_from_menu_to_order():
+def test_adding_multiple_items_from_menu_to_order():
     menu = Menu()
     order = Order()
 

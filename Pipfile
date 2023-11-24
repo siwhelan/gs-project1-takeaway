@@ -7,6 +7,7 @@ name = "pypi"
 pytest = "*"
 python-dotenv = "*"
 twilio = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

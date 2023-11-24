@@ -17,7 +17,7 @@ def test_completed_is_initially_false():
     assert order.completed == False
 
 
-# test an empty order beuing completed raises an error
+# test an empty order being completed raises an error
 def test_error_raised_when_empty_order_is_completed():
     order = Order()
     order.order = []
